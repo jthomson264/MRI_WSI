@@ -105,7 +105,7 @@ def MRIClassifier(x, y, valX, valY, params):
 		            #use_multiprocessing=True,
 		            #workers=6,
 		            #verbose=2,
-		            epochs = 15)
+		            epochs = 100)
 	return H, model
 p = {
 	'first' : [5, 6, 7],
@@ -119,7 +119,7 @@ dummyX,dummyY=training_generator.__getitem__(0)
 testX,testY=validation_generator.__getitem__(0)
 
 
-t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, search_method='random', experiment_name = 'MRI3D')
+t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D')
 hist_df = pd.DataFrame(t) 
 hist_csv_file = 'talosHistory.csv'
 with open(hist_csv_file, mode='w') as f:
