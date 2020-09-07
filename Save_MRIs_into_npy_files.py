@@ -10,7 +10,6 @@ Make npy files for data generator use
 DataAugmentationFlag = True
 TestingFlag = True
 
-
 ## Import Dependencies
 from tqdm import tqdm
 import nibabel as nib
@@ -28,11 +27,12 @@ from tensorflow.keras import backend
 print(backend.image_data_format())
 
 ## Define Helper Functions
+
 def show_slices(slices): # slice plotter
    fig, axes = plt.subplots(1, len(slices))
    for i, slice in enumerate(slices):
        axes[i].imshow(slice.T, cmap="gray", origin="lower")
-       
+      
 def normalizeImage(array_to_be_normalized): # array normalizer
     return array_to_be_normalized/np.max(array_to_be_normalized)
 
@@ -43,7 +43,7 @@ Y_class = classLabels['class']
 #age_in_days = classLabels.age_in_days   # Not used yet
 print(classLabels)
 
-## Load the MRI data Training Set into X, and Save Each npy File
+# Load the MRI data training set into X, and save each npy file
 
 count_t1 = 0
 count_t2 = 0
@@ -65,18 +65,9 @@ for row in tqdm(IDs): # iterate thru each patient
         count_t1 += 1
         #t1_max = np.max(t1_max,np.max(img_t1.get_fdata()))
         #X1 += [img_t1.get_fdata()]
-        
-        ## Temporary Addition to Check IMG Flipping Augmentation
-        #anat_img_data = img_t1.get_fdata()
-        #flipped_img_data = np.flip(anat_img_data, axis=0)
-        #show_slices([anat_img_data[100, :, :], anat_img_data[:, 100, :], anat_img_data[:, :, 100]])
-        #plt.suptitle("Center slices for anatomical image")  
-        #show_slices([flipped_img_data[100, :, :], flipped_img_data[:, 100, :], flipped_img_data[:, :, 100]])
-        #plt.suptitle("Center slices for anatomical image")
-        #plt.show()
-        
     except:
         print("no t1 file found @ "+ fileRoot+"_t1.nii.gz")
+
 
     try:
         img_t2 = nib.load(fileRoot+"_t2.nii.gz")
@@ -85,6 +76,7 @@ for row in tqdm(IDs): # iterate thru each patient
         #X2 += [img_t2.get_fdata()]
     except:
         print("no t2 file found @ "+ fileRoot+"_t2.nii.gz")
+
         
     try:
         img_t1ce = nib.load(fileRoot+"_t1ce.nii.gz")
@@ -117,6 +109,3 @@ for row in tqdm(IDs): # iterate thru each patient
         show_slices([flipped_img_data[100, :, :], flipped_img_data[:, 100, :], flipped_img_data[:, :, 100]])
         plt.suptitle("Center slices for anatomical image")
         plt.show()
-
-    
-
