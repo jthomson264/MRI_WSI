@@ -1,17 +1,7 @@
 # Set-up:
-Using a Bash Command Line: 
-First install Python3 & ensure you have pip package manager. Next, ensure that you install all the following dependencies:
+First install Python3 & ensure you have pip package manager. Next, ensure that you install all the following dependencies: tensorflow 2.0 (pip install tensorflow), pandas (pip install pandas), nibabel (pip install nibabel), matplotlib (pip install matplotlib)
 
- tensorflow 2.0
-pip install tensorflow
- pandas
-pip install pandas
- nibabel
-pip install nibabel
- matplotlib
-pip install matplotlib
-
-# Next, run the following command in a new folder to download the Combined Radiology and Pathology dataset from the MICCAI Challenge:
+# Next, run the following bash command to download the Combined Radiology and Pathology dataset from the MICCAI Challenge:
 
 wget -r --no-parent --reject "index.html*" http://miccai2020-data.eastus.cloudapp.azure.com/CPM-RadPath_2020_Training_Data/
 
