@@ -1,16 +1,14 @@
-# MRI_WSI
-
 # Set-up:
-# Using a Bash Command Line: 
-# First install Python3 & ensure you have pip package manager. Next, ensure that you install all the following dependencies:
+Using a Bash Command Line: 
+First install Python3 & ensure you have pip package manager. Next, ensure that you install all the following dependencies:
 
-# tensorflow 2.0
+ tensorflow 2.0
 pip install tensorflow
-# pandas
+ pandas
 pip install pandas
-# nibabel
+ nibabel
 pip install nibabel
-# matplotlib
+ matplotlib
 pip install matplotlib
 
 # Next, run the following command in a new folder to download the Combined Radiology and Pathology dataset from the MICCAI Challenge:
