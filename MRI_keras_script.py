@@ -41,9 +41,8 @@ val_mask = ~data_mask
 
 ValIDs = IDs[val_mask]
 TrainIDs = IDs[data_mask]
-print('yay')
+
 if DataAugmentationFlag == True:
-    print("even yayer")
     TrainIDs_withAugmentation = []
     for TrainID in list(TrainIDs):
     	TrainID_flipped = TrainID+"_flipped"
@@ -120,19 +119,19 @@ def MRIClassifier(x, y, valX, valY, params):
 		            epochs = 15)
 	return H, model
 p = {
-	'first' : [5],
-	'second' : [5],
-	'third' : [5],
-	'fourth' : [5],
-	'last' : [4, 8,16,32] 
+	'first' : [5,10,15],
+	'second' : [5,10,15],
+	'third' : [5,10,15],
+	'fourth' : [5,10,15],
+	'last' : [8] 
         }
 
 dummyX,dummyY=training_generator.__getitem__(0)
 testX,testY=validation_generator.__getitem__(0)
 
 
-t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D',last_epoch_value=False)
-hist_df = pd.DataFrame(t) 
+t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D')
+hist_df = pd.DataFrame(t.data) 
 hist_csv_file = 'talosHistory.csv'
 with open(hist_csv_file, mode='w') as f:
     hist_df.to_csv(f)
