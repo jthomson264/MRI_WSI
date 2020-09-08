@@ -7,7 +7,7 @@ First install Python3, clone master, & ensure you have pip package manager. Next
 
 wget -r --no-parent --reject "index.html*" http://miccai2020-data.eastus.cloudapp.azure.com/CPM-RadPath_2020_Training_Data/
 
-# Next, ensure that the filepath defined in "Save_MRIs_into_npy_files.py" points to the folder that contains the newly downloaded CPM-RadPath dataset and run the script witht he following command.  You may need to create a folder named "data" in the working directory
+# Next, ensure that the filepath defined in "Save_MRIs_into_npy_files.py" points to the folder that contains the newly downloaded CPM-RadPath dataset and run the script with the following command; also, choose the appropriate augmentation and testing settings at the top of the file.  You may need to create a folder named "data" in the working directory (Warning: data folder will be 126GB with augmentation enabled).
 
 python Save_MRIs_into_npy_files.py
 
