@@ -70,13 +70,11 @@ for index in range(0,len(IDs)):
     labels[ID] = label
     labels[ID_flipped] = label
 	
-# Create Generator Objects and Definte Model
+# Create Generator Objects and Define Model
 training_generator = DataGenerator(partition['train'], labels, **paramz)
 validation_generator = DataGenerator(partition['validation'], labels, **paramz)
 
 def MRIClassifier(x, y, valX, valY, params):
-	training_generator = DataGenerator(partition['train'], labels, **paramz)
-	validation_generator = DataGenerator(partition['validation'], labels, **paramz)
 	model = Sequential([
 	    Conv3D(params['first'], (3,3,3), strides=(1, 1, 1), padding='valid', input_shape = (240,240,155,4)),
 	    BatchNormalization(),
@@ -105,30 +103,19 @@ def MRIClassifier(x, y, valX, valY, params):
 		      loss=loss_fn,
 		      metrics=['accuracy'])
 
-	# Fit model with Generators
-	H = model.fit_generator(generator=training_generator,
-		            validation_data=validation_generator,
-		            #use_multiprocessing=True,
-		            #workers=6,
-		            #verbose=2,
-		            epochs = 15)
-	return H, model
-
-# Define Talos Hyperparameter-Search 
-p = {
-	'first' : [5, 6, 7],
-	'second' : [5, 6, 7],
-	'third' : [5, 6, 7],
-	'fourth' : [5, 6, 7],
-	'last' : [4, 8, 12,16]
-}
-
-dummyX,dummyY=training_generator.__getitem__(0)
-testX,testY=validation_generator.__getitem__(0)
+	return model
 
 
-t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D')
-hist_df = pd.DataFrame(t) 
-hist_csv_file = 'talosHistory.csv'
+# Fit model with Generators
+H = model.fit_generator(generator=training_generator,
+                    validation_data=validation_generator,
+                    #use_multiprocessing=True,
+                    #workers=6,
+                    #verbose=2,
+                    epochs = 30)
+
+# Record History
+hist_df = pd.DataFrame(H) 
+hist_csv_file = 'TrainingHistory.csv'
 with open(hist_csv_file, mode='w') as f:
     hist_df.to_csv(f)
