@@ -74,37 +74,36 @@ for index in range(0,len(IDs)):
 training_generator = DataGenerator(partition['train'], labels, **paramz)
 validation_generator = DataGenerator(partition['validation'], labels, **paramz)
 
-def MRIClassifier(x, y, valX, valY, params):
-	model = Sequential([
-	    Conv3D(params['first'], (3,3,3), strides=(1, 1, 1), padding='valid', input_shape = (240,240,155,4)),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(2, 2, 2)),
-	    Conv3D(params['second'], (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(2, 2, 2)),
-	    Conv3D(params['third'], (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(3, 3, 3)),
-	    Conv3D(params['fourth'], (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(3, 3, 3)),
-	    Flatten(),
-	    Dense(params['last'], activation='relu'),
-	    #tf.keras.layers.Dropout(0.2),
-	    Dense(3, activation = 'softmax') 
-	    ])
-	model.summary()
-	loss_fn = CategoricalCrossentropy(from_logits=True)
-	model.compile(optimizer='adam',
-		      loss=loss_fn,
-		      metrics=['accuracy'])
+model = Sequential([
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid', input_shape = (240,240,155,4)),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(2, 2, 2)),
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(2, 2, 2)),
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(3, 3, 3)),
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(3, 3, 3)),
+    Flatten(),
+    Dense(5, activation='relu'),
+    #tf.keras.layers.Dropout(0.2),
+    Dense(3, activation = 'softmax') 
+    ])
 
-	return model
+model.summary()
 
+loss_fn = CategoricalCrossentropy(from_logits=True)
+
+model.compile(optimizer='adam',
+	      loss=loss_fn,
+	      metrics=['accuracy'])
 
 # Fit model with Generators
 H = model.fit_generator(generator=training_generator,
