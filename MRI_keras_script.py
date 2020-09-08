@@ -7,6 +7,7 @@ Train a Conv3d Network in Keras to Classify Tumors Classes From MRI Alone
 
 @author: ubuntr
 """
+DataAugmentationFlag = True
 
 import talos
 import numpy as np
@@ -40,13 +41,24 @@ val_mask = ~data_mask
 
 ValIDs = IDs[val_mask]
 TrainIDs = IDs[data_mask]
-
+print('yay')
+if DataAugmentationFlag == True:
+    print("even yayer")
+    TrainIDs_withAugmentation = []
+    for TrainID in list(TrainIDs):
+    	TrainID_flipped = TrainID+"_flipped"
+    	TrainIDs_withAugmentation.append(TrainID)
+    	TrainIDs_withAugmentation.append(TrainID_flipped)
+    	
+    TrainIDs = TrainIDs_withAugmentation
+print(TrainIDs)
 partition = {"train": list(TrainIDs) , "validation": list(ValIDs)}
 
 #Generate Dictionary of Class Labels  
 labels = {}
 for index in range(0,len(IDs)):
     ID = IDs[index]
+    ID_flipped = ID+"_flipped"
     Y = Y_class[index]
     label = np.nan
     if Y == 'A':
@@ -57,6 +69,7 @@ for index in range(0,len(IDs)):
         label = 2
         
     labels[ID] = label
+    labels[ID_flipped] = label
 
 
 # Generators
