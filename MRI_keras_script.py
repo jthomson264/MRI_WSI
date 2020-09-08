@@ -51,7 +51,7 @@ if DataAugmentationFlag == True:
     	TrainIDs_withAugmentation.append(TrainID_flipped)
     	
     TrainIDs = TrainIDs_withAugmentation
-print(TrainIDs)
+
 partition = {"train": list(TrainIDs) , "validation": list(ValIDs)}
 
 #Generate Dictionary of Class Labels  
@@ -67,7 +67,6 @@ for index in range(0,len(IDs)):
         label = 1
     elif Y == 'G':
         label = 2
-        
     labels[ID] = label
     labels[ID_flipped] = label
 
@@ -118,21 +117,22 @@ def MRIClassifier(x, y, valX, valY, params):
 		            #use_multiprocessing=True,
 		            #workers=6,
 		            #verbose=2,
-		            epochs = 100)
+		            epochs = 15)
 	return H, model
 p = {
-	'first' : [5, 6, 7],
-	'second' : [5, 6, 7],
-	'third' : [5, 6, 7],
-	'fourth' : [5, 6, 7],
-	'last' : [4, 8, 12,16]
-}
+	'first' : [5],
+	'second' : [5],
+	'third' : [5],
+	'fourth' : [5],
+	'last' : [4, 8,16,32]
+        'epochs' : 
+        }
 
 dummyX,dummyY=training_generator.__getitem__(0)
 testX,testY=validation_generator.__getitem__(0)
 
 
-t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D')
+t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D',last_epoch_value=False)
 hist_df = pd.DataFrame(t) 
 hist_csv_file = 'talosHistory.csv'
 with open(hist_csv_file, mode='w') as f:
