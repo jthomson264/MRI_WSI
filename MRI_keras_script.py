@@ -124,8 +124,7 @@ p = {
 	'second' : [5],
 	'third' : [5],
 	'fourth' : [5],
-	'last' : [4, 8,16,32]
-        'epochs' : 
+	'last' : [4, 8,16,32] 
         }
 
 dummyX,dummyY=training_generator.__getitem__(0)
