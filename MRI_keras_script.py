@@ -3,12 +3,14 @@
 """
 MRI_keras_script
 
-Train a Conv3d Network in Keras to Classify Tumors Classes From MRI Alone
+Train a Conv3D Network in Keras to Classify Tumors Classes From MRI Alone
 
-@author: ubuntr
+@author: James
 """
-DataAugmentationFlag = True
+## Choose settings 
+DataAugmentationFlag = True # use reflected data to augment the data-set?
 
+## Import Dependencies
 import talos
 import numpy as np
 import tensorflow as tf
@@ -18,15 +20,14 @@ from keras.layers import Dense, Conv3D, BatchNormalization, Activation, MaxPooli
 from keras.losses import CategoricalCrossentropy
 from my_classes import DataGenerator
 
-# Parameters
+# Set DataGenerator Parameters
 paramz = {'dim': (240, 240, 155),
           'batch_size': 4,
           'n_classes': 3,
           'n_channels': 4,
           'shuffle': True}
 
-# Load in Dataset Info
-# Read in classification labels
+# Load in Dataset Info and Read in Classification Labels
 classLabels = pd.read_csv('/home/ubuntr/Desktop/Projects/MRI_WSI_MICCAI2020/CPM19/training_data_classification_labels.csv')
 IDs = classLabels.CPM_RadPath_2019_ID
 Y_class = classLabels['class']
@@ -35,26 +36,24 @@ age_in_days = classLabels.age_in_days
 #Divide Data into Training and Validation Using Masks
 percent_of_data_to_train = .8 #Size of training set (percent)
 random_indicies = np.random.rand(len(Y_class))
-
 data_mask = random_indicies < percent_of_data_to_train
 val_mask = ~data_mask
 
 ValIDs = IDs[val_mask]
 TrainIDs = IDs[data_mask]
-print('yay')
-if DataAugmentationFlag == True:
-    print("even yayer")
+
+# Add Augmented (Flipped) Data ONLY from TrainIDs, if Augmentation Enabled
+if DataAugmentationFlag:
     TrainIDs_withAugmentation = []
     for TrainID in list(TrainIDs):
     	TrainID_flipped = TrainID+"_flipped"
     	TrainIDs_withAugmentation.append(TrainID)
     	TrainIDs_withAugmentation.append(TrainID_flipped)
-    	
     TrainIDs = TrainIDs_withAugmentation
-print(TrainIDs)
+
+# Create Parition Dictionary and Generate Dictionary of Class Labels 
 partition = {"train": list(TrainIDs) , "validation": list(ValIDs)}
 
-#Generate Dictionary of Class Labels  
 labels = {}
 for index in range(0,len(IDs)):
     ID = IDs[index]
@@ -70,70 +69,52 @@ for index in range(0,len(IDs)):
         
     labels[ID] = label
     labels[ID_flipped] = label
-
-
-# Generators
-
-
-# Design model
+	
+# Create Generator Objects and Define Model
 training_generator = DataGenerator(partition['train'], labels, **paramz)
 validation_generator = DataGenerator(partition['validation'], labels, **paramz)
-def MRIClassifier(x, y, valX, valY, params):
-	training_generator = DataGenerator(partition['train'], labels, **paramz)
-	validation_generator = DataGenerator(partition['validation'], labels, **paramz)
-	model = Sequential([
-	    Conv3D(params['first'], (3,3,3), strides=(1, 1, 1), padding='valid', input_shape = (240,240,155,4)),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(2, 2, 2)),
-	    Conv3D(params['second'], (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(2, 2, 2)),
-	    Conv3D(params['third'], (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(3, 3, 3)),
-	    Conv3D(params['fourth'], (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
-	    BatchNormalization(),
-	    Activation('relu'),
-	    MaxPooling3D(pool_size=(3, 3, 3)),
-	    Flatten(),
-	    Dense(params['last'], activation='relu'),
-	    #tf.keras.layers.Dropout(0.2),
-	    Dense(3, activation = 'softmax') 
-	    ])
-	model.summary()
-	loss_fn = CategoricalCrossentropy(from_logits=True)
-	model.compile(optimizer='adam',
-		      loss=loss_fn,
-		      metrics=['accuracy'])
 
+model = Sequential([
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid', input_shape = (240,240,155,4)),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(2, 2, 2)),
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(2, 2, 2)),
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(3, 3, 3)),
+    Conv3D(5, (3,3,3), strides=(1, 1, 1), padding='valid'),#, kernel_initializer='he_normal')),
+    BatchNormalization(),
+    Activation('relu'),
+    MaxPooling3D(pool_size=(3, 3, 3)),
+    Flatten(),
+    Dense(5, activation='relu'),
+    #tf.keras.layers.Dropout(0.2),
+    Dense(3, activation = 'softmax') 
+    ])
 
-#model.compile()
+model.summary()
 
-	# Train model on dataset
-	H = model.fit_generator(generator=training_generator,
-		            validation_data=validation_generator,
-		            #use_multiprocessing=True,
-		            #workers=6,
-		            #verbose=2,
-		            epochs = 15)
-	return H, model
-p = {
-	'first' : [5, 6, 7],
-	'second' : [5, 6, 7],
-	'third' : [5, 6, 7],
-	'fourth' : [5, 6, 7],
-	'last' : [4, 8, 12,16]
-}
+loss_fn = CategoricalCrossentropy(from_logits=True)
 
-dummyX,dummyY=training_generator.__getitem__(0)
-testX,testY=validation_generator.__getitem__(0)
+model.compile(optimizer='adam',
+	      loss=loss_fn,
+	      metrics=['accuracy'])
 
+# Fit model with Generators
+H = model.fit_generator(generator=training_generator,
+                    validation_data=validation_generator,
+                    #use_multiprocessing=True,
+                    #workers=6,
+                    #verbose=2,
+                    epochs = 30)
 
-t = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D')
-hist_df = pd.DataFrame(t) 
-hist_csv_file = 'talosHistory.csv'
+# Record History
+hist_df = pd.DataFrame(H) 
+hist_csv_file = 'TrainingHistory.csv'
 with open(hist_csv_file, mode='w') as f:
     hist_df.to_csv(f)
