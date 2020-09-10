@@ -18,7 +18,7 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Conv3D, BatchNormalization, Activation, MaxPooling3D, Flatten, Dropout
 from keras.losses import CategoricalCrossentropy
-from my_classes import DataGenerator
+from Data_Generator_for_MRI import DataGenerator
 
 # Set DataGenerator Parameters
 paramz = {'dim': (240, 240, 155),
