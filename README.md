@@ -1,12 +1,12 @@
 # CPM-RadPath Challenge MICCAI 2020 
 This respository contains code entailing our attempt at the MICCAI 2020 Combined Radiology and Pathology Classification Challenge. More details about the challenge can be found here: https://miccai.westus2.cloudapp.azure.com/competitions/1
 
-The CPM-RadPath 2020 dataset consists of multi-institutional paired radiology scans and digitized histopathology
+"The CPM-RadPath 2020 dataset consists of multi-institutional paired radiology scans and digitized histopathology
 images of brain gliomas, obtained from the same patients, as well as their diagnostic classification label. Taking
 into consideration the latest classification of CNS tumors, the classes used in the CPM-RadPath challenge are:
 - A = Lower grade astrocytoma, IDH-mutant (Grade II or III)
 - O = Oligodendroglioma, IDH-mutant, 1p/19q codeleted (Grade II or III)
-- G = Glioblastoma and Diffuse astrocytic glioma with molecular features of glioblastoma, IDH-wildtype (Grade IV).
+- G = Glioblastoma and Diffuse astrocytic glioma with molecular features of glioblastoma, IDH-wildtype (Grade IV)."
 
 # Installation/Setup:
 First install Python3, clone master, & ensure you have pip package manager. Next, ensure that you install all the following dependencies: tensorflow 2.0 (pip install tensorflow), pandas (pip install pandas), nibabel (pip install nibabel), matplotlib (pip install matplotlib), tqdm (pip install tqdm)
