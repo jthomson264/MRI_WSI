@@ -16,13 +16,13 @@ import numpy as np
 import tensorflow as tf
 import pandas as pd
 from keras.models import Sequential, Model
-from keras.layers import Dense, Conv3D, BatchNormalization, Activation, MaxPooling3D, Flatten, Dropout, Add, Input
+from keras.layers import Dense, Conv3D, BatchNormalization, Activation, MaxPooling3D, Flatten, Dropout, add, Input
 from keras.losses import CategoricalCrossentropy
 from my_classes import DataGenerator
 
 # Parameters
 paramz = {'dim': (240, 240, 155),
-          'batch_size': 4,
+          'batch_size': 2,
           'n_classes': 3,
           'n_channels': 4,
           'shuffle': True}
@@ -73,7 +73,21 @@ for index in range(0,len(IDs)):
 
 
 # Generators
+# function for creating an identity or projection residual module
+def residual_module(layer_in, n_filters):
+	merge_input = layer_in
+	# check if the number of filters needs to be increase, assumes channels last format
 
+	merge_input = Conv3D(n_filters, (1,1,1), padding='same', activation='relu', kernel_initializer='he_normal')(layer_in)
+	# conv1
+	conv1 = Conv3D(n_filters, (3,3,3), padding='same', activation='relu', kernel_initializer='he_normal')(layer_in)
+	# conv2
+	conv2 = Conv3D(n_filters, (3,3,3), padding='same', activation='linear', kernel_initializer='he_normal')(conv1)
+	# add filters, assumes filters/channels last
+	layer_out = add([conv2, merge_input])
+	# activation function
+	layer_out = Activation('relu')(layer_out)
+	return layer_out
 
 # Design model
 training_generator = DataGenerator(partition['train'], labels, **paramz)
@@ -83,26 +97,20 @@ def MRIClassifier(x, y, valX, valY, params):
 	validation_generator = DataGenerator(partition['validation'], labels, **paramz)
     
 	inputs = Input(shape=(240,240,155,4))
-	output_1 = Conv3D(params['first'], (3,3,3), strides=(1, 1, 1), padding='valid')(inputs)
-	output_2 = BatchNormalization()(output_1)
-	output_3 = Activation('relu')(output_2)
-	output_4 = MaxPooling3D(pool_size=(2, 2, 2))(output_3)
-	output_5 = Conv3D(params['second'], (3,3,3), strides=(1, 1, 1), padding='same')(output_4)
-	output_6 = BatchNormalization()(output_5)
-	output_7 = Activation('relu')(output_6)
-	output_8 = Add()([output_7, output_4])
-	output_9 = Conv3D(params['third'], (3,3,3), strides=(1, 1, 1), padding='same')(output_8)
-	output_10 = BatchNormalization()(output_9)
-	output_11 = Activation('relu')(output_10)
-	output_12 = Add()([output_11, output_8])
-	output_13 = MaxPooling3D(pool_size=(2, 2, 2))(output_12)
-	output_14 = Conv3D(params['fourth'], (3,3,3), strides=(1, 1, 1), padding='same')(output_13)
-	output_15 = BatchNormalization()(output_14)
-	output_16 = Activation('relu')(output_15)
-	output_17 = MaxPooling3D(pool_size=(2, 2, 2))(output_16)
-	output_18 = Flatten()(output_17)
-	output_19 = Dense(params['last'], activation='relu')(output_18)
-	predictions = Dense(3, activation='softmax')(output_19)
+	layer = residual_module(inputs, params['first'])
+	layer = BatchNormalization()(layer)
+	layer = MaxPooling3D(pool_size = (3,3,2))(layer)
+	layer = residual_module(layer, params['second'])
+	layer = BatchNormalization()(layer)
+	layer = MaxPooling3D(pool_size = (2,2,2))(layer)
+	layer = residual_module(layer, params['third'])
+	layer = BatchNormalization()(layer)
+	layer = MaxPooling3D(pool_size = (2,2,2))(layer)
+	layer = residual_module(layer, params['fourth'])
+	layer = BatchNormalization()(layer)
+	layer = MaxPooling3D(pool_size = (2,2,2))(layer)
+	layer = Flatten()(layer)
+	predictions = Dense(3, activation='softmax')(layer)
 	loss_fn = CategoricalCrossentropy(from_logits=True)
 	model = Model(inputs=inputs, outputs=predictions)
 	model.summary()
@@ -140,7 +148,7 @@ def MRIClassifier(x, y, valX, valY, params):
 #        tf.keras.layers.Dropout(params['dropout']),
 #	    Dense(3, activation = 'softmax') 
 #	    ])
-#	model.summary()
+	model.summary()
 #	loss_fn = CategoricalCrossentropy(from_logits=True)
 #	model.compile(optimizer='adam',
 #		      loss=loss_fn,
@@ -159,13 +167,13 @@ def MRIClassifier(x, y, valX, valY, params):
         
 	return H, model
 p = {
-	'first' : [6],
-	'second' : [6],
-	'third' : [6],
-	'fourth' : [6],
-    'last' : [6],
+	'first' : [8],
+	'second' : [8],
+	'third' : [8],
+	'fourth' : [8],
+    #'last' : [32, 16, 8],
     #'dropout': [.15, .0001],
-    'learning_rate' : [.01, .001, .1]
+    #'learning_rate' : [.01, .001, .1]
         }
 
 dummyX,dummyY=training_generator.__getitem__(0)
