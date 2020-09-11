@@ -8,7 +8,7 @@ Train a Conv3d Network in Keras to Classify Tumors Classes From MRI Alone
 @author: ubuntr
 """
 DataAugmentationFlag = True
-
+expName = "_TestingLearningRateAndAugmentation_YesAugmentation_20Epochs"
 
 from datetime import datetime
 import talos
@@ -109,7 +109,14 @@ def MRIClassifier(x, y, valX, valY, params):
 	model.compile(optimizer='adam',
               loss=loss_fn,
               metrics=['accuracy'])
-
+    
+    # Save a summary of the model
+	now = datetime.now()
+	nowString = now.strftime("%Y_%m_%d_%H_%M_%S")
+	with open(nowString +expName+ '_ModelSummary.txt','w') as fh:
+        # Pass the file handle in as a lambda function to make it callable
+		model.summary(print_fn=lambda x: fh.write(x + '\n'))
+        
 #	model = Sequential([
 #	    Conv3D(params['first'], (3,3,3), strides=(1, 1, 1), padding='valid', input_shape = (240,240,155,4)),
 #	    BatchNormalization(),
@@ -143,16 +150,11 @@ def MRIClassifier(x, y, valX, valY, params):
 #model.compile()
 
 	# Train model on dataset
-	H = model.fit_generator(generator=training_generator, validation_data=validation_generator, epochs = 1)
+	H = model.fit_generator(generator=training_generator, validation_data=validation_generator, epochs = 20)
 	
-    # Save a summary of the model 
-	nowString = now.strftime("%m_%d_%Y_%H_%M_%S")
-	with open(nowString + '_ModelSummary.txt','w') as fh:
-        # Pass the file handle in as a lambda function to make it callable
-		model.summary(print_fn=lambda x: fh.write(x + '\n'))
     # Save the Training History  
 	hist_df = pd.DataFrame(H.history) 
-	with open(nowString + '_ModelTrainHistory.txt','w') as f:
+	with open(nowString +expName+ '_ModelTrainHistory.txt','w') as f:
 		hist_df.to_csv(f)
         
 	return H, model
@@ -162,7 +164,7 @@ p = {
 	'third' : [6],
 	'fourth' : [6],
     'last' : [6],
-    'dropout': [.15, .0001],
+    #'dropout': [.15, .0001],
     'learning_rate' : [.01, .001, .1]
         }
 
@@ -170,10 +172,10 @@ dummyX,dummyY=training_generator.__getitem__(0)
 testX,testY=validation_generator.__getitem__(0)
 
 now = datetime.now()
-nowString = now.strftime("%m_%d_%Y_%H_%M_%S")
+nowString = now.strftime("%Y_%m_%d_%H_%M_%S")
 ScanObject = talos.Scan(x = dummyX, y=dummyY, x_val=testX, y_val=testY, model = MRIClassifier, params = p, experiment_name = 'MRI3D')
 
 hist_df = pd.DataFrame(ScanObject.data) 
-hist_csv_file = nowString + '_talosData' + '.csv'
+hist_csv_file = nowString +expName+ '_talosData' + '.csv'
 with open(hist_csv_file, mode='w') as f:
     hist_df.to_csv(f)
