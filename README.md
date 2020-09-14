@@ -10,7 +10,7 @@ into consideration the latest classification of CNS tumors, the classes used in 
 
 ## The code contained allows for the training and deployment of classifiers to predict classification label of CNS tumors based on MRI scans alone
 
-The first script (SaveAndNormalizeMRIs.py) contained here allows for the loading and normalization of the radiology scans (T1, T2, T1-contrast enhanced, and flair images); this data is then saved in a new format (.NPY binary file) to allow for rapid loading. The second script (trainKerasModel.py) defines, trains, and deploys a 3D Convolutional Neural Network with a custom data generator.
+The first script (SaveAndNormalizeMRIs.py) contained here allows for the loading and normalization of the radiology scans (T1, T2, T1-contrast enhanced, and flair images); this data is then saved in a new format (.NPY binary file) to allow for rapid loading. The second script (Train3DMRICNN.py) defines, trains, and deploys a 3D Convolutional Neural Network with a custom data generator.
 
 # Installation/Setup:
 First install Python3, clone master, & ensure you have pip package manager. Next, ensure that you install all the following dependencies: tensorflow 2.0 (pip install tensorflow), pandas (pip install pandas), nibabel (pip install nibabel), matplotlib (pip install matplotlib), tqdm (pip install tqdm)
