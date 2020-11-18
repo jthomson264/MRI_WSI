@@ -8,23 +8,25 @@ into consideration the latest classification of CNS tumors, the classes used in 
 - O = Oligodendroglioma, IDH-mutant, 1p/19q codeleted (Grade II or III)
 - G = Glioblastoma and Diffuse astrocytic glioma with molecular features of glioblastoma, IDH-wildtype (Grade IV)."
 
-## The code contained allows for the training and deployment of classifiers to predict classification label of CNS tumors based on MRI scans alone
+## The code contained allows for the training and deployment of classifiers to predict classification label of CNS tumors based on MRI scans alone. 
 
-The first script (SaveAndNormalizeMRIs.py) contained here allows for the loading and normalization of the radiology scans (T1, T2, T1-contrast enhanced, and flair images); this data is then saved in a new format (.NPY binary file) to allow for rapid loading. The second script (Train_3D_MRI_Model.py) defines, trains, and deploys a 3D Convolutional Neural Network with a custom data generator.
+The first script (SaveAndNormalizeMRIs.py) contained here allows for the loading and normalization of the radiology scans (T1, T2, T1-contrast enhanced, and flair images); this data is then saved in a new format (.NPY binary file) to allow for rapid loading. The second script (Train_3D_MRI_Model.py) defines, trains, and deploys a 3D Convolutional Neural Network with a custom data generator. 
 
-# Installation/Setup:
+# Installation & Setup: 
+Please note that the commands detailed below are designed to work on MacOS and Linux. Windows users may have to forge their own path (or better yet, install Linux).
 ## First install Python3, clone master, & ensure you have pip package manager. Next, ensure that you install all the following dependencies: tensorflow 2.0 (pip install tensorflow), pandas (pip install pandas), nibabel (pip install nibabel), matplotlib (pip install matplotlib), tqdm (pip install tqdm)
 
 ## Next, run the following bash commands to download the Radiology dataset from the MICCAI Challenge (~2.0GB):
 
-wget -r --no-parent --reject "index.html*" http://miccai2020-data.eastus.cloudapp.azure.com/CPM-RadPath_2020_Training_Data/Radiology/
+>wget -r --no-parent --reject "index.html*" http://miccai2020-data.eastus.cloudapp.azure.com/CPM-RadPath_2020_Training_Data/Radiology/
 
-wget http://miccai2020-data.eastus.cloudapp.azure.com/CPM-RadPath_2020_Training_Data/training_data_classification_labels.csv
+>wget http://miccai2020-data.eastus.cloudapp.azure.com/CPM-RadPath_2020_Training_Data/training_data_classification_labels.csv
 
-## Next, ensure that the filepath defined in "SaveAndNormalizeMRIs.py" points to the folder that contains the newly downloaded CPM-RadPath dataset and run the script with the following command; also, choose the appropriate augmentation and testing settings at the top of the file.  You may need to create a folder named "data" in the working directory (Warning: data folder will be 126GB with augmentation enabled).
+## Next, ensure that the filepath defined in "SaveAndNormalizeMRIs.py" points to the folder that contains the newly downloaded CPM-RadPath dataset and run the script with the following command. 
+These scripts allow for optional data augmentation via reflection over the median plane. Choose the appropriate data augmentation and testing settings at the top of the file.  You may need to create a folder named "data" in the working directory (Warning: data folder will be 126GB with augmentation enabled).
 
-python SaveAndNormalizeMRIs.py
+>python SaveAndNormalizeMRIs.py
 
 ## Finally, you can run the following command to instantiate and train the Keras classifier
 
-python Train_3D_MRI_Model.py
+>python Train_3D_MRI_Model.py
