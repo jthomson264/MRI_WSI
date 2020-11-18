@@ -13,8 +13,20 @@ into consideration the latest classification of CNS tumors, the classes used in 
 The first script (SaveAndNormalizeMRIs.py) contained here allows for the loading and normalization of the radiology scans (T1, T2, T1-contrast enhanced, and flair images); this data is then saved in a new format (.NPY binary file) to allow for rapid loading. The second script (Train_3D_MRI_Model.py) defines, trains, and deploys a 3D Convolutional Neural Network with a custom data generator. 
 
 # Installation & Setup: 
+
 Please note that the commands detailed below are designed to work on MacOS and Linux. Windows users may have to forge their own path (or better yet, switch to Linux).
-## First install Python3, clone master, & ensure you have pip package manager. Next, ensure that you install all the following dependencies: tensorflow 2.0 (pip install tensorflow), pandas (pip install pandas), nibabel (pip install nibabel), matplotlib (pip install matplotlib), tqdm (pip install tqdm)
+
+## First clone master, and ensure that you have Python 3 and pip package manager already installed. 
+
+>git clone https://github.com/jthomson264/MRI_WSI/
+
+>python --version
+
+>pip -V
+
+## Next, ensure that you install all the following dependencies: tensorflow 2.0, pandas, nibabel, matplotlib, & tqdm
+
+>pip install tensorflow pandas nibabel matplotlib tqdm
 
 ## Next, run the following bash commands to download the Radiology dataset from the MICCAI Challenge (~2.0GB):
 
